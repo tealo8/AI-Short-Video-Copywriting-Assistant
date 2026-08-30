@@ -65,6 +65,41 @@
 └──────────────────────────────────────────────────────────────┘
 ```
 
+**Mermaid 架构图**（GitHub 直接渲染）：
+
+```mermaid
+flowchart TB
+    subgraph FE["前端展示层 · Vue3 + Vite（自研 Apple 风组件库，零第三方 UI）"]
+        FE1[登录 / 首页控制台]
+        FE2[脚本生成 · 四Tab结果区]
+        FE3[标题标签 / 文案改写]
+        FE4[批量生成 · 进度可视化]
+        FE5[历史记录 · 模板库 · 管理后台]
+    end
+    subgraph BE["后端服务层 · FastAPI"]
+        A1[鉴权 JWT + PBKDF2]
+        A2[参数双重校验 · 统一异常]
+        A3[异步任务调度 ThreadPool]
+        A4[批量/历史/模板 业务逻辑]
+        A5[Word/Excel 文档处理]
+    end
+    subgraph AI["AI 能力层"]
+        P1[分层 Prompt 工程 平台x风格x结构x守则]
+        P2[LLM Router 降级链 Ollama - 云端API - Mock演示]
+        P3[JSON 强约束 + 反馈重试]
+        P4[TTS 规则引擎 · 质量检测修复]
+    end
+    subgraph DB["数据持久层 · SQLAlchemy"]
+        D1[(SQLite WAL / MySQL)]
+    end
+    FE2 -- 统一code,message,data + Bearer Token --> A2
+    FE4 --> A3
+    A3 --> P2
+    P2 --> P1 --> P3
+    P3 --> P4
+    A4 --> D1
+```
+
 ## 快速开始
 
 ### 方式一：一键启动（推荐 · 本地开发）
@@ -287,6 +322,10 @@ Ollama 双模型适配方案，实现模型自动降级兜底，兼顾生成质�
 │   ├── src/stores/ · api/ · router/
 │   ├── package.json / vite.config.js / Dockerfile / nginx.conf
 ├── docs/CHECKLIST.md              # 开发自检清单（发布前逐项打勾）
+├── docs/API.md                    # 接口说明（含标准分页/错误码）
+├── docs/MODULES.md                # 模块说明 + Mermaid 业务流程图
+├── docs/test_case.md              # 测试用例文档（正常/边界场景）
+├── backend/sql/init.sql           # 数据库建表脚本（SQLite/MySQL 双方言）
 └── README.md
 ```
 

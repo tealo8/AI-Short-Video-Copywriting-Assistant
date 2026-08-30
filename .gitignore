@@ -1,17 +1,33 @@
 # 环境与依赖
+.env
+*.key
 .venv/
 venv/
 __pycache__/
 *.pyc
-.env
+node_modules/
 
-# 运行时数据
-backend/data/*.db*
-backend/data/runtime_settings.json
-backend/logs/
-frontend/node_modules/
+# 数据库本地文件（绝不提交实际数据）
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+backend/data/
+data/
+
+# 日志 / 缓存 / 构建产物
+logs/
+*.log
 frontend/dist/
 frontend/node_modules/.vite/
+backend/logs/
+backend/data/runtime_settings.json
+
+# 大模型权重 / 本地上传文件 / 导出文档（由使用者自行准备/生成）
+models/
+upload_files/
+output_export/
 
 # 测试产物
 _export_test_*.docx
