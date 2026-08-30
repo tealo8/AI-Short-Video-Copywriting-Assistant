@@ -1,0 +1,71 @@
+# ============================================================
+# AI 内容工场 · Docker 一键部署
+# 启动：docker compose up -d --build   （或双击根目录 start-docker.bat）
+# 停止：docker compose down            （或 stop-docker.bat）
+# 前置：本机已装 Ollama 时默认走 host.docker.internal 直连；
+#       无本地 Ollama 可启用 ollama 服务（profile: ollama）自动拉取模型。
+# 自定义：根目录 .env 可覆盖下方全部 ${VAR}（参照 backend/.env.example）
+# ============================================================
+
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+    container_name: acp-backend
+    environment:
+      - LLM_PROVIDER_PRIORITY=${LLM_PROVIDER_PRIORITY:-ollama,cloud,mock}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
+      - CLOUD_BASE_URL=${CLOUD_BASE_URL:-https://api.deepseek.com}
+      - CLOUD_API_KEY=${CLOUD_API_KEY:-}
+      - CLOUD_MODEL=${CLOUD_MODEL:-deepseek-chat}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production-8f2c9d1e7a}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:////app/data/app.db}
+      - BATCH_MAX_WORKERS=${BATCH_MAX_WORKERS:-2}
+      - BATCH_ITEM_LIMIT=${BATCH_ITEM_LIMIT:-50}
+      - LLM_TIMEOUT=${LLM_TIMEOUT:-180}
+    volumes:
+      - ./data:/app/data          # SQLite 数据持久化
+      - ./logs:/app/logs          # 运行日志持久化
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # 容器访问宿主机 Ollama
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org}
+    container_name: acp-frontend
+    depends_on:
+      backend:
+        condition: service_healthy   # 后端就绪才启动前端
+    ports:
+      - "${WEB_PORT:-80}:80"
+    restart: unless-stopped
+
+  # 可选：容器化 Ollama（本机未装 Ollama 时启用）
+  #   docker compose --profile ollama up -d
+  #   docker exec acp-ollama ollama pull qwen2.5:7b
+  ollama:
+    image: ollama/ollama:latest
+    container_name: acp-ollama
+    profiles: ["ollama"]
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+volumes:
+  ollama_data:

@@ -1,0 +1,27 @@
+# 环境与依赖
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+
+# 运行时数据
+backend/data/*.db*
+backend/data/runtime_settings.json
+backend/logs/
+frontend/node_modules/
+frontend/dist/
+frontend/node_modules/.vite/
+
+# 测试产物
+_export_test_*.docx
+_tmpdl/
+
+# 本机生成的快捷方式（可由 创建后台启动快捷方式.cmd 重新生成）
+*.lnk
+
+# IDE / 系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

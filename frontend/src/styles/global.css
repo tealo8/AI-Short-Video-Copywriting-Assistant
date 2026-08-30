@@ -1,0 +1,95 @@
+/* ============================================================
+   全局样式 —— 居中窄屏 + 超大留白，复刻 Apple 官网阅读体验
+   ============================================================ */
+@import './tokens.css';
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--fs-body);
+  line-height: var(--lh);
+  color: var(--c-ink);
+  background: var(--c-white);
+  overflow-x: hidden;
+}
+
+#app { min-height: 100vh; display: flex; flex-direction: column; }
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: inherit; }
+
+::selection { background: rgba(0, 113, 227, 0.18); }
+
+/* 页面容器：居中窄屏 + 两侧留白缓冲 */
+.page {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 32px 96px;
+  flex: 1;
+  animation: fadeIn var(--t-base) var(--ease);
+}
+.page-narrow { max-width: 760px; }
+
+/* 页面切换：0.2s 匀速淡入淡出 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 大标题层级 */
+.hero-title { font-size: var(--fs-hero); font-weight: 700; letter-spacing: -0.02em; color: var(--c-ink); }
+.page-title { font-size: var(--fs-title); font-weight: 700; letter-spacing: -0.01em; color: var(--c-ink); }
+.section-title { font-size: var(--fs-module); font-weight: 700; color: var(--c-ink); }
+.helper-text { font-size: var(--fs-tiny); color: var(--c-gray); }
+.subtle { color: var(--c-gray); }
+
+/* 通用间距 */
+.mt-8 { margin-top: 8px; } .mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; }
+.mt-32 { margin-top: 32px; } .mt-48 { margin-top: 48px; }
+.mb-8 { margin-bottom: 8px; } .mb-16 { margin-bottom: 16px; } .mb-24 { margin-bottom: 24px; }
+
+/* 滚动条：极简 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.12); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* 骨架屏微动画 */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, #f0f0f3 25%, #f7f7fa 50%, #f0f0f3 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+/* 生成中的轻柔轮转加载 */
+@keyframes softSpin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(0, 113, 227, 0.15);
+  border-top-color: var(--c-blue);
+  border-radius: 50%;
+  animation: softSpin 0.8s linear infinite;
+}
+
+/* 表格 */
+table.table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+.table th {
+  text-align: left; font-weight: 600; color: var(--c-gray);
+  padding: 10px 12px; border-bottom: 1px solid var(--c-line);
+  white-space: nowrap;
+}
+.table td { padding: 12px; border-bottom: 1px solid var(--c-line); vertical-align: top; color: var(--c-ink); }
+.table tr:hover td { background: #fafafc; }
+
+/* 工具栏 */
+.toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.toolbar .spacer { flex: 1; }
